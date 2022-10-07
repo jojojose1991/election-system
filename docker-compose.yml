@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+  
+  db:
+    image: postgres:14
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_USER=election
+      - POSTGRES_PASSWORD=election
+      - POSTGRES_DB=election
+
+    volumes:
+      - db_data:/var/lib/postgresql/data:rw
+
+  backend:
+    image: election-system:dev
+    build: .
+    working_dir: /app
+    # command: python manage.py runserver 0.0.0.0
+    command: sleep infinity
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/app
+  
+
+volumes:
+  db_data:

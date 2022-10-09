@@ -155,3 +155,5 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+
+TRACK_STUDENT_VOTES = os.environ.get('TRACK_STUDENT_VOTES', False)

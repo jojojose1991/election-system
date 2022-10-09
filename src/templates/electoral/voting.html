@@ -1,81 +1,223 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet"> -->
-    <link rel="stylesheet" href="/static/fonts/roboto-font.css">
 
-    <link rel="stylesheet" href="/static/fonts/icomoon/style.css">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet"> -->
+  <link rel="stylesheet" href="/static/fonts/roboto-font.css">
 
-    <link rel="stylesheet" href="/static/css/owl.carousel.min.css">
-    <link rel="stylesheet" href="/static/css/owl.theme.default.min.css">
+  <link rel="stylesheet" href="/static/fonts/icomoon/style.css">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
-    
-    <!-- Style -->
-    <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="/static/css/owl.carousel.min.css">
+  <link rel="stylesheet" href="/static/css/owl.theme.default.min.css">
 
-    <title>Voting - Election Portal | St. Joseph's University</title>
-  </head>
-  <body>
-  
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
 
-  <div class="d-lg-flex half justify-content-center">
-    <div class="contents order-2 order-md-1">
-        <div class="owl-carousel owl-theme">
-            <div class="item"><h4>1</h4></div>
-            <div class="item"><h4>2</h4></div>
-            <div class="item"><h4>3</h4></div>
-            <div class="item"><h4>4</h4></div>
-            <div class="item"><h4>5</h4></div>
-            <div class="item"><h4>6</h4></div>
-            <div class="item"><h4>7</h4></div>
-            <div class="item"><h4>8</h4></div>
-            <div class="item"><h4>9</h4></div>
-            <div class="item"><h4>10</h4></div>
-            <div class="item"><h4>11</h4></div>
-            <div class="item"><h4>12</h4></div>
-        </div>        
+  <!-- Style -->
+  <link rel="stylesheet" href="/static/css/style.css">
 
+  <title>Voting - Election Portal | St. Joseph's University</title>
+</head>
+
+<body>
+  <style>
+    .gallery .card img {
+      width: 150px;
+      height: 150px;
+      overflow: hidden;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
+
+  <form target="_self" action="{% url 'voting' %}" method="post">{% csrf_token %}
+    <div class="d-lg-flex">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-3 bg-info vh-100 text-white">
+
+            <div class="row align-items-center justify-content-center">
+              <div class="col-md-12 my-3">
+                <h2>Register Number: {{registerno}}</h2>
+                {% if positions|length > 1 %}
+                <span>You will be voting for {{positions|length}} positions</span>
+                {% else %}
+                <span>You will be voting for {{positions|length}} position</span>
+                {% endif %}
+                <div class="row">
+
+                  <ol>
+                    {% for position in positions %}
+                    <li class="p-1">
+                      {{position}} -
+                      <input type="text" disabled id="nav-input-{{forloop.counter0}}"
+                        name="nav-input-{{forloop.counter0}}">
+                      <input type="hidden" id="nav-input-id-{{forloop.counter0}}"
+                        name="nav-input-id-{{forloop.counter0}}">
+                    </li>
+                    {% endfor %}
+                  </ol>
+                </div>
+
+                <!-- Notices -->
+                <div class="alert alert-secondary" role="alert">
+                  Your votes will only be submitted together at the last voting page, when you click Submit button
+                </div>
+
+                {% if is_track_enabled %}
+                <div class="alert alert-danger" role="alert">
+                  Your votes are being tracked. The admins will be able to see who you voted for!
+                </div>
+                {% endif %}
+
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#refuseVoteModal">Cancel
+                  My
+                  Vote</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-9 gallery">
+            <div class="owl-carousel owl-theme">
+              {% for position, candidates in positions.items %}
+              <div class="item position p-3 text-center">
+                <h3>Position - {{position}}</h3>
+                <div class="d-flex flex-wrap my-3">
+                  {% for candidate in candidates %}
+                  <div class="col-lg-2 p-2">
+                    <div class="card candidate-card">
+                      <img src="{{candidate.logo.url}}" alt="{{candidate.name}}" class="img-fluid img-thumbnail">
+                      <div class="card-body">
+                        <h5 class="card-title text-center">{{candidate.name}}</h5>
+                        <span class="d-none candidate-id">{{candidate.id}}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {% endfor %}
+                  <!-- {# End inner for #} -->
+                </div>
+
+                {% if forloop.last %}
+                <button type="button" disabled class="btn btn-primary last-btn" data-toggle="modal"
+                  data-target="#exampleModal">Submit</button>
+                {% else %}
+                <button type="button" disabled class="btn btn-info position-confirm-btn">Confirm</button>
+                {% endif %}
+              </div>
+              {% endfor %}
+              <!-- {# End outer for #} -->
+
+              <!-- End of owl carousel -->
+            </div>
+          </div>
+
+
+
+          <div class="modal fade text-dark" id="exampleModal" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Submit responses?</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  By clicking this button you are agreeing to exercising your voting rights and place your votes.
+                  Any malicious activity will be dealt with strictly.
+                  {% if is_track_enabled %}
+                  <div class="alert alert-danger" role="alert">
+                    Your votes are being tracked. The admins will be able to see who you voted for!
+                  </div>
+                  {% endif %}
+                </div>
+                <div class="modal-footer">
+                  <input type="submit" class="btn btn-primary" value="I Agree" name="submit_vote">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal fade text-dark" id="refuseVoteModal" tabindex="-1" role="dialog"
+            aria-labelledby="refuseVoteModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="refuseVoteModalLabel">Cancel My Vote</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  By clicking this button you are refusing to continue with your voting. Your right to exercise
+                  vote will be declared invalid. You will not be able to continue this vote again.
+                  Are you sure you want to continue?
+                </div>
+                <div class="modal-footer">
+                  <input type="submit" class="btn btn-danger" value="Yes" name="refuse_vote">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
     </div>
-  </div>
-    
+  </form>
 
-    <script src="/static/js/jquery-3.3.1.min.js"></script>
-    <script src="/static/js/popper.min.js"></script>
-    <script src="/static/js/bootstrap.min.js"></script>
-    <script src="/static/js/owl.carousel.min.js"></script>
-    <script src="/static/js/main.js"></script>
-    <script>
-        $(document).ready(function(){
-            $('.owl-carousel').owlCarousel({
-                loop: false,
-                margin:20,
-                nav: false,
-                mouseDrag: false,
-                touchDrag: false,
-                pullDrag: false,
-                rewind: false,
-                items: 1,
-                center: true,
-                dots: false,
-                autoplay: false,
-                // responsive:{
-                //     0:{
-                //         items:1
-                //     },
-                //     600:{
-                //         items:3
-                //     },
-                //     1000:{
-                //         items:5
-                //     }
-                // }
-            })
-        });
-    </script>
-  </body>
+  <script src="/static/js/jquery-3.3.1.min.js"></script>
+  <script src="/static/js/popper.min.js"></script>
+  <script src="/static/js/bootstrap.min.js"></script>
+  <script src="/static/js/owl.carousel.min.js"></script>
+  <script src="/static/js/main.js"></script>
+  <script>
+    $(document).ready(function () {
+      var owl = $('.owl-carousel').owlCarousel({
+        loop: false,
+        margin: 20,
+        nav: false,
+        mouseDrag: false,
+        touchDrag: false,
+        pullDrag: false,
+        rewind: false,
+        items: 1,
+        center: true,
+        dots: false,
+        autoplay: false,
+      });
+
+      $(".position-confirm-btn").on('click', function () {
+        owl.trigger('next.owl.carousel');
+      });
+
+      $(".candidate-card").click(function (e) {
+        // Card highlight
+        $('.candidate-card').removeClass('border-primary');
+        $(this).addClass('border-primary');
+
+        // Add value to nav input
+        positionDiv = this.closest('.position');
+        let index = $(".position").index(positionDiv);
+        let candidateName = $(this).find('.card-title').text();
+        let candidateId = $(this).find('.candidate-id').text();
+        $('#nav-input-' + index).val(candidateName)
+        $('#nav-input-id-' + index).val(candidateId)
+
+        // Enable confirm button
+        let btn = $(this).find('.btn');
+        $(positionDiv).find('.btn').removeAttr('disabled');
+      });
+
+    });
+  </script>
+</body>
+
 </html>

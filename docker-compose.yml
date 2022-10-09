@@ -15,13 +15,20 @@ services:
       - db_data:/var/lib/postgresql/data:rw
 
   backend:
+    image: enigma2k2/election-system:latest
+    environment:
+      - DEBUG=0
+    ports:
+      - 8000:8000
+
+  backend-dev:
     image: election-system:dev
     build: .
     working_dir: /app
     # command: python manage.py runserver 0.0.0.0
     command: sleep infinity
     ports:
-      - 8000:8000
+      - 8001:8000
     volumes:
       - .:/app
   

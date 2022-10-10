@@ -74,9 +74,11 @@
                 </div>
                 {% endif %}
 
-                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#refuseVoteModal">Cancel
-                  My
-                  Vote</button>
+                {% if allow_cancel_vote %}
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#refuseVoteModal">
+                  Cancel My Vote
+                </button>
+                {% endif %}
               </div>
             </div>
           </div>
@@ -104,7 +106,7 @@
 
                 {% if forloop.last %}
                 <button type="button" disabled class="btn btn-primary last-btn" data-toggle="modal"
-                  data-target="#exampleModal">Submit</button>
+                  data-target="#submitVoteModal">Submit</button>
                 {% else %}
                 <button type="button" disabled class="btn btn-info position-confirm-btn">Confirm</button>
                 {% endif %}
@@ -118,12 +120,12 @@
 
 
 
-          <div class="modal fade text-dark" id="exampleModal" tabindex="-1" role="dialog"
-            aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal fade text-dark" id="submitVoteModal" tabindex="-1" role="dialog"
+            aria-labelledby="submitVoteModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Submit responses?</h5>
+                  <h5 class="modal-title" id="submitVoteModalLabel">Submit responses?</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
@@ -144,6 +146,7 @@
             </div>
           </div>
 
+          {% if allow_cancel_vote %}
           <div class="modal fade text-dark" id="refuseVoteModal" tabindex="-1" role="dialog"
             aria-labelledby="refuseVoteModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -166,6 +169,7 @@
               </div>
             </div>
           </div>
+          {% endif %}
 
 
         </div>

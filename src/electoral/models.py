@@ -9,6 +9,7 @@ class Position(models.Model):
     being held.
     '''
     name = models.CharField(max_length=100, unique=True)
+    order = models.IntegerField(blank=True, null=True, unique=True)
 
     def __str__(self):
         return f"{self.name}"

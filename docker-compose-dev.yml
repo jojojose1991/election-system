@@ -1,0 +1,48 @@
+version: '3.7'
+
+x-common-env: &env-config
+  DEBUG: 1
+  SECRET_KEY: django-insecure-(f&kr-1!75lxfb$y6ziu64#8i7c_1m0y%pn+@gdu69vh0y3pp6
+  DATABASE_HOST: db
+
+
+services:
+  db:
+  # Default used for UG
+    image: postgres:14
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=election
+      - POSTGRES_PASSWORD=election
+      - POSTGRES_DB=election
+    volumes:
+      - db_data:/var/lib/postgresql/data:rw
+
+  db_pg:
+    image: postgres:14
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=election
+      - POSTGRES_PASSWORD=election
+      - POSTGRES_DB=election
+    volumes:
+      - db_pg_data:/var/lib/postgresql/data:rw
+
+  webapp:
+    image: election-system:dev
+    build: .
+    working_dir: /app
+    # command: python manage.py runserver 0.0.0.0
+    command: sleep infinity
+    restart: unless-stopped
+    environment: *env-config
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/app
+      - ./media:/media
+  
+
+volumes:
+  db_data:
+  db_pg_data:

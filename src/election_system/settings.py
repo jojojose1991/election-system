@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY','django-insecure-(f&kr-1!75lxfb$y6ziu64#8i7c_1m0y%pn+@gdu69vh0y3pp6')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = strtobool(os.environ.get('DEBUG', 'False'))
@@ -158,3 +158,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
 
 TRACK_STUDENT_VOTES = os.environ.get('TRACK_STUDENT_VOTES', False)
+ALLOW_CANCEL_VOTE = os.environ.get('ALLOW_CANCEL_VOTE', False)

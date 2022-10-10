@@ -136,3 +136,5 @@ dmypy.json
 
 archive/
 src/static_prod/
+src/media/
+media/

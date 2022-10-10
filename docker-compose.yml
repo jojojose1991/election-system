@@ -1,37 +1,57 @@
 version: '3.7'
 
+x-common-env: &env-config
+  DEBUG: 0
+  SECRET_KEY: django-insecure-(f&kr-1!75lxfb$y6ziu64#8i7c_1m0y%pn+@gdu69vh0y3pp6
+
+
 services:
-  
   db:
     image: postgres:14
-    ports:
-      - 5433:5432
+    restart: always
     environment:
       - POSTGRES_USER=election
       - POSTGRES_PASSWORD=election
       - POSTGRES_DB=election
-
     volumes:
       - db_data:/var/lib/postgresql/data:rw
 
-  backend:
+  webapp:
     image: enigma2k2/election-system:latest
-    environment:
-      - DEBUG=0
-    ports:
-      - 8000:8000
-
-  backend-dev:
-    image: election-system:dev
     build: .
-    working_dir: /app
-    # command: python manage.py runserver 0.0.0.0
-    command: sleep infinity
-    ports:
-      - 8001:8000
+    container_name: election-app
+    restart: always
+    environment: *env-config
+    #    command: "wait-for-it $$DATABASE_HOST:$$DATABASE_PORT \
+    #         && gunicorn --config gunicorn-cfg.py election_system.wsgi"
     volumes:
-      - .:/app
-  
+      - ./media:/media
+      - staticfiles:/app/static_prod/
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:latest
+    restart: always
+    ports:
+      - 8080:80
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - staticfiles:/app/static_prod/
+      - ./media:/media
+    depends_on: 
+      - webapp
+
+  migration:
+    image: enigma2k2/election-system:latest
+    environment: *env-config
+    depends_on:
+      - db
+    working_dir: /app
+    command: bash -c "python manage.py migrate && python manage.py collectstatic --noinput"
+    volumes:
+      - staticfiles:/app/static_prod/
 
 volumes:
   db_data:
+  staticfiles:

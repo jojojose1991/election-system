@@ -3,7 +3,8 @@ from electoral.models import Position, Candidate, Student, Vote
 
 @admin.register(Position)
 class PositionAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('name', 'order')
+    # pass
 
 @admin.register(Candidate)
 class CandidateAdmin(admin.ModelAdmin):

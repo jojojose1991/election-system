@@ -25,7 +25,7 @@ def voting_page(request):
     except KeyError:
         return HttpResponseRedirect(reverse('home'))
 
-    all_candidates = Candidate.objects.filter(active=True)
+    all_candidates = Candidate.objects.filter(active=True).order_by('position__order')
     
     # Dict structure for all candidates, grouped by their position
     positions_d = {}
@@ -53,6 +53,7 @@ def voting_page(request):
         'positions': positions_d,
         'registerno': register_number,
         'is_track_enabled': settings.TRACK_STUDENT_VOTES,
+        'allow_cancel_vote': settings.ALLOW_CANCEL_VOTE,
     })
 
 def save_vote(request, positions_d):
